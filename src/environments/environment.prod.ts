@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-backend-project-name.vercel.app/api'
-  // Replace 'your-backend-project-name' with your actual Vercel backend deployment URL
+  apiUrl: 'https://qr-attendance-intern-backend.vercel.app/api',
+  apiBaseUrl: 'https://qr-attendance-intern-backend.vercel.app'
 };
 
