@@ -1,0 +1,265 @@
+.scanner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.scanner-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+.scanner-header {
+  padding: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 16px 16px 0 0;
+}
+
+.scanner-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.scanner-close {
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  color: white;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.scanner-close:hover {
+  opacity: 1;
+}
+
+.scanner-body {
+  padding: 16px;
+}
+
+.camera-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 16px;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+
+.camera-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #1a1a1a;
+  color: white;
+}
+
+.placeholder-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.camera-placeholder p {
+  color: white;
+  opacity: 0.7;
+}
+
+.scan-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 70%;
+  max-width: 300px;
+  max-height: 300px;
+  pointer-events: none;
+}
+
+.corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #4caf50;
+  border-radius: 4px;
+}
+
+.corner.top-left {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.corner.top-right {
+  top: 0;
+  right: 0;
+  border-left: none;
+  border-bottom: none;
+}
+
+.corner.bottom-left {
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  border-top: none;
+}
+
+.corner.bottom-right {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+}
+
+.scan-instruction {
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 16px 0;
+  text-align: center;
+  font-weight: 600;
+  padding: 12px;
+  background: #e3f2fd;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.error-box {
+  background: #fee;
+  color: #c33;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #fcc;
+}
+
+.btn-retry {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-retry:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.instructions {
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.instructions h4 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 15px;
+}
+
+.instructions ol {
+  margin: 0 0 12px 0;
+  padding-left: 20px;
+  color: #666;
+}
+
+.instructions li {
+  margin-bottom: 6px;
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.tip {
+  margin: 0;
+  padding: 10px;
+  background: #fff3cd;
+  border-left: 3px solid #ffc107;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #856404;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .scanner-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .scanner-body {
+    padding: 12px;
+  }
+
+  .camera-container {
+    aspect-ratio: 3/4;
+  }
+
+  .scan-frame {
+    width: 80%;
+    height: 50%;
+  }
+
+  .instructions {
+    font-size: 13px;
+  }
+
+  .instructions li {
+    font-size: 13px;
+  }
+}
+

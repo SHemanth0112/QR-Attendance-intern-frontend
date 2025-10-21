@@ -1,0 +1,57 @@
+<div class="home-container">
+  <div class="home-content">
+    <div *ngIf="!currentUser" class="welcome-section">
+      <h1>QR Attendance System</h1>
+      <p class="tagline">Manage attendance with ease using QR codes</p>
+      
+      <div class="action-buttons">
+        <button class="btn-primary" (click)="goToLogin()">Sign In</button>
+        <button class="btn-secondary" (click)="goToRegister()">Create Account</button>
+      </div>
+    </div>
+
+    <div *ngIf="currentUser" class="dashboard-section">
+      <div class="user-info-card">
+        <div class="user-avatar">
+          {{ currentUser.name.charAt(0).toUpperCase() }}
+        </div>
+        <div class="user-details">
+          <h2>Welcome, {{ currentUser.name }}!</h2>
+          <p class="user-email">{{ currentUser.email }}</p>
+          <span class="role-badge" [class.teacher]="currentUser.role === 'teacher'">
+            {{ currentUser.role === 'teacher' ? '👨‍🏫 Teacher' : '👨‍🎓 Student' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <div class="card-icon">📊</div>
+          <h3>Dashboard</h3>
+          <p>View your attendance statistics and analytics</p>
+        </div>
+
+        <div class="dashboard-card" *ngIf="currentUser.role === 'teacher'">
+          <div class="card-icon">📝</div>
+          <h3>Create Session</h3>
+          <p>Generate QR codes for attendance tracking</p>
+        </div>
+
+        <div class="dashboard-card" *ngIf="currentUser.role === 'student'">
+          <div class="card-icon">📷</div>
+          <h3>Scan QR</h3>
+          <p>Scan QR code to mark your attendance</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-icon">📅</div>
+          <h3>History</h3>
+          <p>View your attendance history and records</p>
+        </div>
+      </div>
+
+      <button class="btn-logout" (click)="logout()">Sign Out</button>
+    </div>
+  </div>
+</div>
+

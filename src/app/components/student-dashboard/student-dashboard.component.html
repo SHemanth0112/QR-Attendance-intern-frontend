@@ -1,0 +1,141 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>Student Dashboard</h1>
+      <p class="welcome-text" *ngIf="currentUser">Welcome, {{ currentUser.name }}!</p>
+    </div>
+    <button class="btn-logout" (click)="logout()">Logout</button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+    <button class="alert-close" (click)="errorMessage = ''">&times;</button>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+    <button class="alert-close" (click)="successMessage = ''">&times;</button>
+  </div>
+
+  <div class="sessions-section">
+    <h2>Available Sessions ({{ sessions.length }})</h2>
+    
+    <div *ngIf="isLoading" class="loading">
+      Loading sessions...
+    </div>
+
+    <div *ngIf="!isLoading && sessions.length === 0" class="empty-state">
+      <div class="empty-icon">📚</div>
+      <h3>No Active Sessions</h3>
+      <p>There are no active sessions available at the moment. Check back later!</p>
+    </div>
+
+    <div class="sessions-grid">
+      <div 
+        class="session-card" 
+        *ngFor="let session of sessions"
+        [class.past-session]="isPast(session)"
+        [class.attended]="hasAttended(session.id)"
+        (click)="viewSessionDetails(session)"
+      >
+        <div class="session-badge" *ngIf="isUpcoming(session) && !hasAttended(session.id)">
+          <span>Upcoming</span>
+        </div>
+        <div class="session-badge past" *ngIf="isPast(session) && !hasAttended(session.id)">
+          <span>Past</span>
+        </div>
+        <div class="session-badge attended" *ngIf="hasAttended(session.id)">
+          <span>✓ Attended</span>
+        </div>
+
+        <div class="session-header">
+          <h3>{{ session.subject }}</h3>
+          <p class="teacher-name">By {{ session.teacherName }}</p>
+        </div>
+
+        <div class="session-details">
+          <div class="detail-item">
+            <span class="icon">📅</span>
+            <span>{{ formatDate(session.date) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="icon">⏰</span>
+            <span>{{ session.startTime }} - {{ session.endTime }}</span>
+          </div>
+          <div class="detail-item" *ngIf="session.venue">
+            <span class="icon">📍</span>
+            <span>{{ session.venue }}</span>
+          </div>
+        </div>
+
+        <div class="session-footer">
+          <span class="session-id">{{ session.sessionId }}</span>
+          <span class="view-details">Click to view details →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Session Details Modal -->
+  <div class="modal-overlay" *ngIf="selectedSession" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2>{{ selectedSession.subject }}</h2>
+          <p class="modal-subtitle">{{ selectedSession.teacherName }}</p>
+        </div>
+        <button class="modal-close" (click)="closeModal()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="session-info-grid">
+          <div class="info-item">
+            <span class="info-label">Date</span>
+            <span class="info-value">{{ formatDate(selectedSession.date) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Time</span>
+            <span class="info-value">{{ selectedSession.startTime }} - {{ selectedSession.endTime }}</span>
+          </div>
+          <div class="info-item" *ngIf="selectedSession.venue">
+            <span class="info-label">Venue</span>
+            <span class="info-value">{{ selectedSession.venue }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Session ID</span>
+            <span class="info-value">{{ selectedSession.sessionId }}</span>
+          </div>
+        </div>
+
+        <div class="description-section" *ngIf="selectedSession.description">
+          <h4>Description</h4>
+          <p>{{ selectedSession.description }}</p>
+        </div>
+
+        <div class="attendance-info">
+          <p>📊 {{ selectedSession.attendanceCount }} students marked attendance</p>
+        </div>
+
+        <div class="action-section" *ngIf="!hasAttended(selectedSession.id)">
+          <button class="btn-scan" (click)="openScanner(selectedSession)">
+            📷 Scan QR Code to Mark Attendance
+          </button>
+        </div>
+
+        <div class="attended-section" *ngIf="hasAttended(selectedSession.id)">
+          <div class="attended-badge">
+            ✓ You have marked attendance for this session
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Scanner Component -->
+  <app-qr-scanner 
+    *ngIf="showScanner"
+    (onScan)="onQRScanned($event)"
+    (onClose)="closeScanner()"
+  ></app-qr-scanner>
+</div>
+

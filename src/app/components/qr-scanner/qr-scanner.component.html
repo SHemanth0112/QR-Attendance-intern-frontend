@@ -1,0 +1,60 @@
+<div class="scanner-overlay" (click)="closeScanner()">
+  <div class="scanner-content" (click)="$event.stopPropagation()">
+    <div class="scanner-header">
+      <h2>📷 Scan QR Code</h2>
+      <button class="scanner-close" (click)="closeScanner()">&times;</button>
+    </div>
+
+    <div class="scanner-body">
+      <div class="camera-container">
+        <!-- Video element for camera feed -->
+        <video 
+          #video 
+          class="camera-preview" 
+          autoplay 
+          playsinline
+          *ngIf="cameraActive"
+        ></video>
+        
+        <!-- Canvas for QR processing (hidden) -->
+        <canvas #canvas style="display: none;"></canvas>
+        
+        <!-- Scanning frame overlay -->
+        <div class="scan-frame" *ngIf="cameraActive">
+          <div class="corner top-left"></div>
+          <div class="corner top-right"></div>
+          <div class="corner bottom-left"></div>
+          <div class="corner bottom-right"></div>
+        </div>
+
+        <!-- Loading/Error state -->
+        <div class="camera-placeholder" *ngIf="!cameraActive">
+          <div class="placeholder-icon">📷</div>
+          <p *ngIf="!errorMessage">Initializing camera...</p>
+        </div>
+      </div>
+
+      <p class="scan-instruction">{{ scanInstruction }}</p>
+      
+      <div *ngIf="errorMessage" class="error-box">
+        {{ errorMessage }}
+        <button class="btn-retry" (click)="retryCamera()" *ngIf="!cameraActive">
+          🔄 Retry Camera
+        </button>
+      </div>
+
+      <div class="instructions">
+        <h4>📱 Instructions:</h4>
+        <ol>
+          <li>Allow camera access when prompted</li>
+          <li>Point camera at teacher's QR code</li>
+          <li>Position QR code within the frame</li>
+          <li>Hold steady - scanning automatically</li>
+          <li>Attendance marks when detected ✓</li>
+        </ol>
+        <p class="tip">💡 Tip: Make sure the QR code is well-lit and in focus</p>
+      </div>
+    </div>
+  </div>
+</div>
+

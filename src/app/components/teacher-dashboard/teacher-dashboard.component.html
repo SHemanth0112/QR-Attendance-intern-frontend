@@ -1,0 +1,204 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>Teacher Dashboard</h1>
+      <p class="welcome-text" *ngIf="currentUser">Welcome, {{ currentUser.name }}!</p>
+    </div>
+    <button class="btn-logout" (click)="logout()">Logout</button>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+    <button class="alert-close" (click)="errorMessage = ''">&times;</button>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+    <button class="alert-close" (click)="successMessage = ''">&times;</button>
+  </div>
+
+  <div class="actions-bar">
+    <button class="btn-primary" (click)="toggleForm()">
+      {{ showForm ? 'Cancel' : '+ Create New Session' }}
+    </button>
+  </div>
+
+  <!-- Create Session Form -->
+  <div class="create-session-form" *ngIf="showForm">
+    <h2>Create New Session</h2>
+    <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="subject">Subject Name *</label>
+          <input 
+            type="text" 
+            id="subject" 
+            formControlName="subject"
+            placeholder="e.g., Mathematics"
+            [class.error]="subject?.invalid && subject?.touched"
+          />
+          <div class="error-message" *ngIf="subject?.invalid && subject?.touched">
+            <span *ngIf="subject?.errors?.['required']">Subject is required</span>
+            <span *ngIf="subject?.errors?.['minlength']">Subject must be at least 2 characters</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="date">Date *</label>
+          <input 
+            type="date" 
+            id="date" 
+            formControlName="date"
+            [class.error]="date?.invalid && date?.touched"
+          />
+          <div class="error-message" *ngIf="date?.invalid && date?.touched">
+            <span *ngIf="date?.errors?.['required']">Date is required</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="startTime">Start Time *</label>
+          <input 
+            type="time" 
+            id="startTime" 
+            formControlName="startTime"
+            [class.error]="startTime?.invalid && startTime?.touched"
+          />
+          <div class="error-message" *ngIf="startTime?.invalid && startTime?.touched">
+            <span *ngIf="startTime?.errors?.['required']">Start time is required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="endTime">End Time *</label>
+          <input 
+            type="time" 
+            id="endTime" 
+            formControlName="endTime"
+            [class.error]="endTime?.invalid && endTime?.touched"
+          />
+          <div class="error-message" *ngIf="endTime?.invalid && endTime?.touched">
+            <span *ngIf="endTime?.errors?.['required']">End time is required</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="venue">Venue</label>
+        <input 
+          type="text" 
+          id="venue" 
+          formControlName="venue"
+          placeholder="e.g., Room 101"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea 
+          id="description" 
+          formControlName="description"
+          rows="3"
+          placeholder="Optional session details"
+        ></textarea>
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn-submit"
+        [disabled]="isLoading"
+      >
+        {{ isLoading ? 'Creating...' : 'Create Session' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Sessions List -->
+  <div class="sessions-section">
+    <h2>My Sessions ({{ sessions.length }})</h2>
+    
+    <div *ngIf="isLoading && sessions.length === 0" class="loading">
+      Loading sessions...
+    </div>
+
+    <div *ngIf="!isLoading && sessions.length === 0" class="empty-state">
+      <p>No sessions created yet. Click "Create New Session" to get started!</p>
+    </div>
+
+    <div class="sessions-grid">
+      <div class="session-card" *ngFor="let session of sessions">
+        <div class="session-header">
+          <div class="session-title">
+            <h3>{{ session.subject }}</h3>
+            <span class="session-id">ID: {{ session.sessionId }}</span>
+          </div>
+          <span class="status-badge" [class.active]="session.isActive" [class.inactive]="!session.isActive">
+            {{ session.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+
+        <div class="session-details">
+          <div class="detail-item">
+            <span class="icon">📅</span>
+            <span>{{ formatDate(session.date) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="icon">⏰</span>
+            <span>{{ session.startTime }} - {{ session.endTime }}</span>
+          </div>
+          <div class="detail-item" *ngIf="session.venue">
+            <span class="icon">📍</span>
+            <span>{{ session.venue }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="icon">👥</span>
+            <span>{{ session.attendanceCount }} attendance</span>
+          </div>
+        </div>
+
+        <div class="session-description" *ngIf="session.description">
+          <p>{{ session.description }}</p>
+        </div>
+
+        <div class="session-actions">
+          <button class="btn-action btn-qr" (click)="viewQR(session)">
+            View QR Code
+          </button>
+          <button class="btn-action btn-toggle" (click)="toggleStatus(session)">
+            {{ session.isActive ? 'Deactivate' : 'Activate' }}
+          </button>
+          <button class="btn-action btn-delete" (click)="deleteSession(session)">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div class="modal-overlay" *ngIf="selectedSession" (click)="closeQRModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>QR Code - {{ selectedSession.subject }}</h2>
+        <button class="modal-close" (click)="closeQRModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="qr-info">
+          <p><strong>Session ID:</strong> {{ selectedSession.sessionId }}</p>
+          <p><strong>Date:</strong> {{ formatDate(selectedSession.date) }}</p>
+          <p><strong>Time:</strong> {{ selectedSession.startTime }} - {{ selectedSession.endTime }}</p>
+        </div>
+        <div class="qr-code-container">
+          <img [src]="currentQRCode" alt="QR Code" class="qr-code-image">
+          <p class="qr-refresh-note">🔄 QR Code refreshes every 5 seconds</p>
+        </div>
+        <button class="btn-download" (click)="downloadQR(selectedSession)">
+          Download QR Code
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
