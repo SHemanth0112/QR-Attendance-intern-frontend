@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "QR Attendance System Frontend",
   "engines": {
-    "node": "18.x",
+    "node": "22.x",
     "npm": ">=9.0.0"
   },
   "scripts": {
